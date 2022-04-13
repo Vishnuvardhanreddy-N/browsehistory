@@ -1,6 +1,7 @@
+import {Component} from 'react'
+
 import './App.css'
 
-// These are the list used in the application. You can move them to any component needed.
 const initialHistoryList = [
   {
     id: 0,
@@ -78,16 +79,16 @@ const initialHistoryList = [
 
 // Replace your code here
 
-const BrowseItems = props =>{
-    const {BrowseDetails,deleteApp} = props
-    const {id,timeAccessed,logoUrl,title,domainUrl} = props
-    const onDelete = () => {
+const BrowseItems = props => {
+  const {BrowseDetails, deleteApp} = props
+  const {id, timeAccessed, logoUrl, title, domainUrl} = BrowseDetails
+  const onDelete = () => {
     deleteApp(id)
   }
-    return(
-        <li className="user-card-container">
-        <p className="time"> {timeAccessed} </p>
-      
+  return (
+    <li className="user-card-container">
+      <p className="time"> {timeAccessed} </p>
+
       <div className="user-details-container">
         <img src={logoUrl} className="logo-pic" alt="logo-pic" />
         <p className="title"> {title} </p>
@@ -101,10 +102,11 @@ const BrowseItems = props =>{
         />
       </button>
     </li>
-    )
+  )
 }
-const App = () => {
-    state = {
+
+class App extends Component {
+  state = {
     searchInput: '',
     usersDetailsList: initialHistoryList,
   }
@@ -114,51 +116,55 @@ const App = () => {
       searchInput: event.target.value,
     })
   }
+
   deleteApp = id => {
-    const {usersDetailsList} = this.state
+    const {usersDetailsList, searchInput} = this.state
     const filteredUsersData = usersDetailsList.filter(
-      each => each.id !== id,
+      eachUser => eachUser.id !== id,
     )
     this.setState({
       usersDetailsList: filteredUsersData,
     })
-}
-    render(){
-         const {searchInput, usersDetailsList} = this.state
-          const searchResults = usersDetailsList.filter(eachUser =>
-      eachUser.name.includes(searchInput),
-    )
-        return{
-            <div className="app-container">
-                <div className = "search-container">
-                    <img src="https://assets.ccbp.in/frontend/react-js/history-website-logo-img.png"
-                    className = "app-logo"
-                    alt = "app logo"
-                    />
-                    <img src="https://assets.ccbp.in/frontend/react-js/search-img.png"
-                    className = "search-logo"
-                    alt = "search"
-                    />
-                    <input
-                    type="search"
-                    placeholder = "search History"
-                    onChange={this.onChangeSearchInput}
-                    value={searchInput}
-                    />
+  }
 
-                </div>
-                <ul className="list-container">
-                {searchResults.map(eachUser => (
-                    <BrowseItems
-                    BrowseDetails={eachUser}
-                    key={eachUser.id}
-                    deleteApp={this.deleteApp}
-                    />
-                ))}
-                </ul>
-            </div>
-        }
-    }
+  render() {
+    const {searchInput, usersDetailsList} = this.state
+    const searchResults = usersDetailsList.filter(eachUser =>
+      eachUser.title.includes(searchInput),
+    )
+
+    return (
+      <div className="app-container">
+        <div className="search-container">
+          <img
+            src="https://assets.ccbp.in/frontend/react-js/history-website-logo-img.png"
+            className="app-logo"
+            alt="app logo"
+          />
+          <img
+            src="https://assets.ccbp.in/frontend/react-js/search-img.png"
+            className="search-logo"
+            alt="search"
+          />
+          <input
+            type="search"
+            placeholder="search History"
+            onChange={this.onChangeSearchInput}
+            value={searchInput}
+          />
+        </div>
+        <ul className="list-container">
+          {searchResults.map(eachUser => (
+            <BrowseItems
+              BrowseDetails={eachUser}
+              key={eachUser.id}
+              deleteApp={this.deleteApp}
+            />
+          ))}
+        </ul>
+      </div>
+    )
+  }
 }
 
 export default App
