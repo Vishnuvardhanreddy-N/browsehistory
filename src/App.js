@@ -1,7 +1,10 @@
 import {Component} from 'react'
 
+import UserHistoryList from './components/UserHistoryList'
+
 import './App.css'
 
+// These are the list used in the application. You can move them to any component needed.
 const initialHistoryList = [
   {
     id: 0,
@@ -78,93 +81,77 @@ const initialHistoryList = [
 ]
 
 // Replace your code here
-
-const BrowseItems = props => {
-  const {BrowseDetails, deleteApp} = props
-  const {id, timeAccessed, logoUrl, title, domainUrl} = BrowseDetails
-  const onDelete = () => {
-    deleteApp(id)
-  }
-  return (
-    <li className="user-card-container">
-      <p className="time"> {timeAccessed} </p>
-
-      <div className="user-details-container">
-        <img src={logoUrl} className="logo-pic" alt="logo-pic" />
-        <p className="title"> {title} </p>
-        <p className="domain-url"> {domainUrl} </p>
-      </div>
-      <button type="button" className="delete-button" onClick={onDelete}>
-        <img
-          src="https://assets.ccbp.in/frontend/react-js/delete-img.png"
-          alt="delete"
-          className="delete-img"
-        />
-      </button>
-    </li>
-  )
-}
-
-class App extends Component {
+class HistoryListApp extends Component {
   state = {
     searchInput: '',
-    usersDetailsList: initialHistoryList,
+    historyList: initialHistoryList,
   }
 
   onChangeSearchInput = event => {
-    this.setState({
-      searchInput: event.target.value,
-    })
+    this.setState({searchInput: event.target.value})
+    // console.log(event.target.value)
   }
 
-  deleteApp = id => {
-    const {usersDetailsList, searchInput} = this.state
-    const filteredUsersData = usersDetailsList.filter(
-      eachUser => eachUser.id !== id,
+  onDeleteHistoryItem = id => {
+    const {historyList} = this.state
+    const filteredHistoryList = historyList.filter(
+      eachHistoryItem => eachHistoryItem.id !== id,
     )
-    this.setState({
-      usersDetailsList: filteredUsersData,
-    })
+    this.setState({historyList: filteredHistoryList})
   }
 
   render() {
-    const {searchInput, usersDetailsList} = this.state
-    const searchResults = usersDetailsList.filter(eachUser =>
-      eachUser.title.includes(searchInput),
+    const {searchInput, historyList} = this.state
+    // console.log(searchInput)
+    const searchResults = historyList.filter(eachHistoryItem =>
+      eachHistoryItem.title.includes(searchInput),
     )
 
     return (
       <div className="app-container">
-        <div className="search-container">
-          <img
-            src="https://assets.ccbp.in/frontend/react-js/history-website-logo-img.png"
-            className="app-logo"
-            alt="app logo"
-          />
-          <img
-            src="https://assets.ccbp.in/frontend/react-js/search-img.png"
-            className="search-logo"
-            alt="search"
-          />
-          <input
-            type="search"
-            placeholder="search History"
-            onChange={this.onChangeSearchInput}
-            value={searchInput}
-          />
-        </div>
-        <ul className="list-container">
-          {searchResults.map(eachUser => (
-            <BrowseItems
-              BrowseDetails={eachUser}
-              key={eachUser.id}
-              deleteApp={this.deleteApp}
+        <div className="navbar-container">
+          <div className="logo-container">
+            <img
+              src="https://assets.ccbp.in/frontend/react-js/history-website-logo-img.png"
+              alt="app logo"
+              className="history-img"
             />
-          ))}
-        </ul>
+            <div className="input-search-container">
+              <div className="search-logo-container">
+                <img
+                  src="https://assets.ccbp.in/frontend/react-js/search-img.png"
+                  alt="search icon"
+                  className="search-icon"
+                />
+              </div>
+              <input
+                type="search"
+                className="search-input"
+                placeholder="Search history"
+                onChange={this.onChangeSearchInput}
+                value={searchInput}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="history-list-container">
+          {searchResults.length > 0 ? (
+            <ul className="history-list">
+              {searchResults.map(eachHistoryItem => (
+                <UserHistoryList
+                  historyListDetails={eachHistoryItem}
+                  key={eachHistoryItem.id}
+                  onDeleteHistoryItem={this.onDeleteHistoryItem}
+                />
+              ))}
+            </ul>
+          ) : (
+            <p className="Empty-history-message">There is no history to show</p>
+          )}
+        </div>
       </div>
     )
   }
 }
 
-export default App
+export default HistoryListApp
